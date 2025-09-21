@@ -27,20 +27,31 @@ jobs:
         python -m pip install --upgrade pip
         pip install opencv-python pyzbar Pillow pyautogui numpy pyinstaller
         
-    - name: Copy required DLL files
+    - name: Copy required DLL files and assets
       run: |
         python -c "
         import pyzbar, shutil, os
         from pathlib import Path
+        from PIL import Image
+        
+        # Copy DLL files
         pyzbar_path = Path(pyzbar.__file__).parent
         shutil.copy(pyzbar_path / 'libiconv.dll', '.')
         shutil.copy(pyzbar_path / 'libzbar-64.dll', '.')
-        print('DLL files copied successfully')
+        
+        # Create icon file from logo
+        if os.path.exists('logo.png'):
+            img = Image.open('logo.png')
+            icon_sizes = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
+            img.save('qriftly_icon.ico', format='ICO', sizes=icon_sizes)
+            print('Icon created from logo.png')
+        
+        print('All files copied successfully')
         "
         
     - name: Build executable
       run: |
-        pyinstaller --onefile --windowed --name "QRiftly" --add-binary "libiconv.dll;." --add-binary "libzbar-64.dll;." qr_scanner.py
+        pyinstaller --onefile --windowed --name "QRiftly" --icon "qriftly_icon.ico" --add-binary "libiconv.dll;." --add-binary "libzbar-64.dll;." --add-data "qriftly_icon.ico;." --add-data "logo.png;." qr_scanner.py
         
     - name: Get version from tag
       id: get_version

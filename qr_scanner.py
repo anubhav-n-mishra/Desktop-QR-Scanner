@@ -10,6 +10,7 @@ import time
 import webbrowser
 from typing import List, Tuple, Optional
 import os
+import sys
 import subprocess
 import re
 import xml.etree.ElementTree as ET
@@ -58,10 +59,17 @@ class QRiftlyScanner:
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
         
-        # Set window icon (if available)
+        # Set window icon (using our logo)
         try:
-            self.root.iconbitmap("icon.ico")
-        except:
+            # Try to use our custom icon
+            if os.path.exists("qriftly_icon.ico"):
+                self.root.iconbitmap("qriftly_icon.ico")
+            elif os.path.exists("logo.png"):
+                # Fallback to PNG if ICO not available
+                icon_img = tk.PhotoImage(file="logo.png")
+                self.root.iconphoto(True, icon_img)
+        except Exception as e:
+            print(f"Could not set icon: {e}")
             pass
         
         # Configure modern theme with proper button styling
@@ -117,6 +125,9 @@ class QRiftlyScanner:
         
         # Set window background
         self.root.configure(bg='#f8f9fa')
+        
+        # Create menu bar
+        self.create_menu_bar()
         
         # Simple, reliable main container
         main_frame = ttk.Frame(self.root, padding="20")
@@ -338,6 +349,131 @@ Made with ❤️ by Anubhav Mishra"""
         self.last_wifi_config = None
         self.update_status("Results cleared. Ready to scan QR codes...")
     
+    def create_menu_bar(self):
+        """Create menu bar with app shortcuts and options"""
+        menubar = tk.Menu(self.root)
+        self.root.config(menu=menubar)
+        
+        # File menu
+        file_menu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="File", menu=file_menu)
+        file_menu.add_command(label="📸 Screenshot Scan", command=self.scan_screenshot, accelerator="Ctrl+S")
+        file_menu.add_command(label="📂 Open Image File", command=self.scan_file, accelerator="Ctrl+O")
+        file_menu.add_separator()
+        file_menu.add_command(label="🗑️ Clear Results", command=self.clear_results, accelerator="Ctrl+L")
+        file_menu.add_separator()
+        file_menu.add_command(label="❌ Exit", command=self.root.quit, accelerator="Alt+F4")
+        
+        # Tools menu
+        tools_menu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="Tools", menu=tools_menu)
+        tools_menu.add_command(label="📷 Toggle Camera", command=self.toggle_camera, accelerator="Ctrl+C")
+        tools_menu.add_command(label="📋 Copy All Results", command=self.copy_results, accelerator="Ctrl+A")
+        tools_menu.add_separator()
+        tools_menu.add_command(label="🖥️ Create Desktop Shortcut", command=self.create_desktop_shortcut)
+        tools_menu.add_command(label="📌 Pin to Taskbar", command=self.pin_to_taskbar)
+        
+        # Help menu
+        help_menu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="Help", menu=help_menu)
+        help_menu.add_command(label="❓ Help & Usage", command=self.show_help, accelerator="F1")
+        help_menu.add_command(label="🌟 About QRiftly", command=self.show_about)
+        
+        # Bind keyboard shortcuts
+        self.root.bind('<Control-s>', lambda e: self.scan_screenshot())
+        self.root.bind('<Control-o>', lambda e: self.scan_file())
+        self.root.bind('<Control-c>', lambda e: self.toggle_camera())
+        self.root.bind('<Control-l>', lambda e: self.clear_results())
+        self.root.bind('<Control-a>', lambda e: self.copy_results())
+        self.root.bind('<F1>', lambda e: self.show_help())
+    
+    def create_desktop_shortcut(self):
+        """Create a desktop shortcut for QRiftly"""
+        try:
+            import winshell
+            desktop = winshell.desktop()
+            exe_path = os.path.abspath(sys.executable) if getattr(sys, 'frozen', False) else os.path.abspath(__file__)
+            
+            # Create shortcut
+            shortcut_path = os.path.join(desktop, "QRiftly.lnk")
+            
+            # Use PowerShell to create shortcut (more reliable)
+            ps_script = f'''
+            $WshShell = New-Object -comObject WScript.Shell
+            $Shortcut = $WshShell.CreateShortcut("{shortcut_path}")
+            $Shortcut.TargetPath = "{exe_path}"
+            $Shortcut.Description = "QRiftly - Professional QR Code Scanner"
+            $Shortcut.WorkingDirectory = "{os.path.dirname(exe_path)}"
+            $Shortcut.Save()
+            '''
+            
+            subprocess.run(["powershell", "-Command", ps_script], check=True, capture_output=True)
+            
+            messagebox.showinfo("Success", "Desktop shortcut created successfully! 🖥️✅")
+            self.update_status("Desktop shortcut created! 🖥️✅", emoji="🎉")
+            
+        except Exception as e:
+            # Fallback method
+            try:
+                desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+                exe_path = os.path.abspath(sys.executable) if getattr(sys, 'frozen', False) else os.path.abspath(__file__)
+                
+                # Create a simple batch file shortcut
+                batch_path = os.path.join(desktop, "QRiftly.bat")
+                with open(batch_path, 'w') as f:
+                    f.write(f'@echo off\ncd /d "{os.path.dirname(exe_path)}"\nstart "" "{exe_path}"\n')
+                
+                messagebox.showinfo("Success", "Desktop shortcut (batch file) created successfully! 🖥️✅")
+                self.update_status("Desktop shortcut created! 🖥️✅", emoji="🎉")
+                
+            except Exception as e2:
+                messagebox.showerror("Error", f"Failed to create desktop shortcut: {str(e2)}")
+                self.update_status(f"Shortcut creation failed: {str(e2)}", emoji="❌")
+    
+    def pin_to_taskbar(self):
+        """Show instructions for pinning to taskbar"""
+        instructions = """📌 Pin QRiftly to Taskbar:
+
+🔹 Method 1 (Windows 10/11):
+   1. Right-click on the QRiftly.exe file
+   2. Select "Pin to taskbar"
+
+🔹 Method 2:
+   1. Open QRiftly
+   2. Right-click on the QRiftly icon in taskbar
+   3. Select "Pin to taskbar"
+
+🔹 Method 3:
+   1. Create desktop shortcut first (Tools → Create Desktop Shortcut)
+   2. Drag the shortcut to your taskbar
+
+💡 Tip: Keep QRiftly running and right-click its taskbar icon to pin it!"""
+        
+        messagebox.showinfo("Pin to Taskbar", instructions)
+        self.update_status("Taskbar pinning instructions shown! 📌", emoji="💡")
+    
+    def show_about(self):
+        """Show about dialog with app information"""
+        about_text = """🚀 QRiftly v1.0.1
+Professional QR Code Scanner
+
+✨ Features:
+• Screenshot QR scanning
+• File-based QR scanning  
+• Live camera detection
+• WiFi auto-connect
+• 100% offline operation
+
+🔒 Privacy:
+• No data collection
+• Local processing only
+• Secure WiFi handling
+
+💜 Made with love by Anubhav Mishra
+🌟 Open source on GitHub"""
+        
+        messagebox.showinfo("About QRiftly", about_text)
+
     def copy_results(self):
         """Copy all results to clipboard"""
         content = self.results_text.get('1.0', tk.END).strip()

@@ -5,6 +5,27 @@ All notable changes to QRiftly will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-09-22
+
+### Added
+- **Brand New Logo**: Beautiful QRiftly logo now displayed as app icon and window icon
+- **Menu Bar**: Complete menu system with File, Tools, and Help menus
+- **Keyboard Shortcuts**: Quick access via keyboard shortcuts (Ctrl+S, Ctrl+O, etc.)
+- **Desktop Shortcuts**: Create desktop shortcuts for quick access via Tools menu
+- **Taskbar Integration**: Instructions and tools for pinning to taskbar
+- **About Dialog**: Professional about dialog with app information
+
+### Enhanced
+- **User Experience**: Professional branded interface with custom icon
+- **Accessibility**: Full keyboard navigation support
+- **Convenience**: Easy access to app functionality via shortcuts and menu
+- **Branding**: Consistent QRiftly logo throughout the application
+
+### Technical
+- Updated PyInstaller configuration to embed custom icon
+- Added icon generation from PNG logo for cross-platform compatibility
+- Enhanced build process with proper asset inclusion
+
 ## [1.0.1] - 2025-09-22
 
 ### Fixed
