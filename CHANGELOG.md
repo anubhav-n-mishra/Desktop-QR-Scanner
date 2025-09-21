@@ -5,6 +5,19 @@ All notable changes to QRiftly will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2025-09-22
+
+### Fixed
+- **Critical Bug Fix**: Resolved `libzbar.dll` missing error in Windows executable
+- Added required DLL files (`libzbar-64.dll` and `libiconv.dll`) to PyInstaller build
+- Updated GitHub Actions workflow to include DLL dependencies
+- QR scanning now works properly in standalone executable
+
+### Technical
+- Created custom PyInstaller spec file for proper binary inclusion
+- Enhanced build process for better Windows compatibility
+- Improved CI/CD pipeline with DLL management
+
 ## [1.0.0] - 2025-09-21
 
 ### Added
