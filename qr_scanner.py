@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from pyzbar import pyzbar
-from PIL import Image
+from PIL import Image, ImageTk
 import pyautogui
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, scrolledtext
@@ -867,12 +867,12 @@ Professional QR Code Scanner
                     break
                 
                 # Update camera preview (resize for display)
-                display_frame = cv2.resize(frame, (320, 240))
+                display_frame = cv2.resize(frame, (400, 300))
                 frame_rgb = cv2.cvtColor(display_frame, cv2.COLOR_BGR2RGB)
                 img = Image.fromarray(frame_rgb)
                 
-                # Convert to PhotoImage for tkinter
-                photo = tk.PhotoImage(data=img.tobytes(), format="PPM")
+                # Convert to PhotoImage for tkinter (correct method)
+                photo = ImageTk.PhotoImage(img)
                 
                 # Update camera label in main thread
                 try:
