@@ -1,0 +1,85 @@
+name: Build and Release QRiftly
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install opencv-python pyzbar Pillow pyautogui numpy pyinstaller
+        
+    - name: Build executable
+      run: |
+        pyinstaller --onefile --windowed --name "QRiftly" --icon=icon.ico qr_scanner.py
+        
+    - name: Create build info
+      run: |
+        echo "Build Date: $(Get-Date)" > dist/BUILD_INFO.txt
+        echo "Version: ${{ github.ref_name }}" >> dist/BUILD_INFO.txt
+        echo "Commit: ${{ github.sha }}" >> dist/BUILD_INFO.txt
+        
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: QRiftly-Windows
+        path: |
+          dist/QRiftly.exe
+          dist/BUILD_INFO.txt
+          README.md
+          LICENSE
+          
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          dist/QRiftly.exe
+          dist/BUILD_INFO.txt
+        name: QRiftly ${{ github.ref_name }}
+        body: |
+          # 🚀 QRiftly ${{ github.ref_name }} - Professional QR Scanner
+          
+          ## 📦 Download
+          - **QRiftly.exe** - Windows executable (no installation required)
+          - **BUILD_INFO.txt** - Build information and version details
+          
+          ## ✨ Features
+          - 📸 **Screenshot Scanning** - Capture screen to scan QR codes
+          - 📂 **File Scanning** - Load images from your computer
+          - 📹 **Live Camera** - Real-time webcam QR scanning
+          - 📶 **WiFi Auto-Connect** - Automatically connect to WiFi networks
+          - 🔒 **Offline Operation** - Works completely offline
+          - 🎨 **Modern UI** - Beautiful, responsive interface
+          
+          ## 🚀 Quick Start
+          1. Download `QRiftly.exe`
+          2. Run the executable (no installation needed)
+          3. Choose your scanning method
+          4. Start scanning QR codes!
+          
+          ## 🛡️ Security
+          - No data sent to external servers
+          - Secure WiFi profile handling
+          - Input validation and sanitization
+          
+          Made with 💜 by Anubhav Mishra
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
