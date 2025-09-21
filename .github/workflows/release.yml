@@ -27,9 +27,20 @@ jobs:
         python -m pip install --upgrade pip
         pip install opencv-python pyzbar Pillow pyautogui numpy pyinstaller
         
+    - name: Copy required DLL files
+      run: |
+        python -c "
+        import pyzbar, shutil, os
+        from pathlib import Path
+        pyzbar_path = Path(pyzbar.__file__).parent
+        shutil.copy(pyzbar_path / 'libiconv.dll', '.')
+        shutil.copy(pyzbar_path / 'libzbar-64.dll', '.')
+        print('DLL files copied successfully')
+        "
+        
     - name: Build executable
       run: |
-        pyinstaller --onefile --windowed --name "QRiftly" qr_scanner.py
+        pyinstaller --onefile --windowed --name "QRiftly" --add-binary "libiconv.dll;." --add-binary "libzbar-64.dll;." qr_scanner.py
         
     - name: Get version from tag
       id: get_version
