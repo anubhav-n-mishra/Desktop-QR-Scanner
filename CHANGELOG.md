@@ -5,6 +5,25 @@ All notable changes to QRiftly will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2025-09-22
+
+### Fixed
+- **CRITICAL BUG**: Resolved "invalid command name" error when closing the application
+- **Camera Cleanup**: Fixed tkinter widget reference errors during app shutdown
+- **Thread Management**: Improved camera thread cleanup and synchronization
+- **Window Close**: Added proper WM_DELETE_WINDOW protocol handler for clean shutdown
+
+### Technical
+- Enhanced widget existence checking before tkinter operations
+- Added safe error handling for widget destruction scenarios
+- Improved camera loop with proper shutdown detection
+- Better exception handling for TclError during cleanup
+
+### User Experience
+- App now closes cleanly without error popups
+- No more annoying error dialogs on exit
+- Smoother shutdown process for better user experience
+
 ## [1.1.0] - 2025-09-22
 
 ### Added
