@@ -5,6 +5,26 @@ All notable changes to QRiftly will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2025-09-22
+
+### Fixed
+- **CAMERA FUNCTIONALITY**: Restored camera feature that was broken after v1.1.1 cleanup fix
+- **Missing Import**: Added ImageTk import required for proper camera display
+- **Display Method**: Fixed PhotoImage creation for camera frames using ImageTk.PhotoImage
+- **Camera Preview**: Improved camera preview resolution to 400x300 for better visibility
+
+### Technical  
+- Updated PIL imports to include ImageTk for tkinter camera integration
+- Fixed camera frame display method for proper real-time preview
+- Enhanced camera preview quality while maintaining performance
+- Preserved all safety improvements and bug fixes from v1.1.1
+
+### User Experience
+- Live camera QR scanning now works perfectly
+- Camera preview displays correctly without errors
+- Real-time QR detection fully functional
+- All three scanning methods (screenshot, file, camera) working
+
 ## [1.1.1] - 2025-09-22
 
 ### Fixed
