@@ -256,6 +256,9 @@ class QRiftlyScanner:
         self.last_qr_data = ""
         self.last_wifi_config = None
         
+        # Set up proper cleanup on window close
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+        
     def update_status(self, message: str, show_progress: bool = False, emoji: str = "⚡"):
         """Update the status label with colorful messages and animations"""
         # Add emoji and style to status messages
@@ -817,18 +820,40 @@ Professional QR Code Scanner
             self.camera_running = False
 
     def stop_camera(self):
-        """Stop camera scanning"""
+        """Stop camera scanning with proper cleanup"""
         self.camera_running = False
-        self.camera_btn.config(text="📹 Live Camera\n📱 Real-time Scan")
         
+        # Safely update button text if widget still exists
+        try:
+            if hasattr(self, 'camera_btn') and self.camera_btn.winfo_exists():
+                self.camera_btn.config(text="📹 Live Camera\n📱 Real-time Scan")
+        except tk.TclError:
+            # Widget has been destroyed, ignore
+            pass
+        
+        # Clean up camera
         if self.camera:
-            self.camera.release()
+            try:
+                self.camera.release()
+            except:
+                pass
             self.camera = None
         
-        # Hide camera frame
-        self.camera_frame.pack_forget()
+        # Hide camera frame safely
+        try:
+            if hasattr(self, 'camera_frame') and self.camera_frame.winfo_exists():
+                self.camera_frame.pack_forget()
+        except tk.TclError:
+            # Widget has been destroyed, ignore
+            pass
         
-        self.update_status("Camera stopped", emoji="📴")
+        # Update status safely
+        try:
+            if hasattr(self, 'root') and self.root.winfo_exists():
+                self.update_status("Camera stopped", emoji="📴")
+        except tk.TclError:
+            # Widget has been destroyed, ignore
+            pass
 
     def camera_loop(self):
         """Main camera scanning loop"""
@@ -850,7 +875,11 @@ Professional QR Code Scanner
                 photo = tk.PhotoImage(data=img.tobytes(), format="PPM")
                 
                 # Update camera label in main thread
-                self.root.after(0, self.update_camera_display, photo)
+                try:
+                    if self.camera_running and hasattr(self, 'root') and self.root.winfo_exists():
+                        self.root.after(0, self.update_camera_display, photo)
+                except (tk.TclError, AttributeError):
+                    break
                 
                 # Scan for QR codes (with cooldown to prevent spam)
                 current_time = time.time()
@@ -858,7 +887,11 @@ Professional QR Code Scanner
                     qr_codes = self.decode_qr_codes(frame)
                     if qr_codes:
                         for qr_data in qr_codes:
-                            self.root.after(0, self.add_result, qr_data, "📹 Live Camera")
+                            try:
+                                if self.camera_running and hasattr(self, 'root') and self.root.winfo_exists():
+                                    self.root.after(0, self.add_result, qr_data, "📹 Live Camera")
+                            except (tk.TclError, AttributeError):
+                                break
                         last_scan_time = current_time
                 
                 time.sleep(0.1)  # Small delay to prevent excessive CPU usage
@@ -869,16 +902,49 @@ Professional QR Code Scanner
 
     def update_camera_display(self, photo):
         """Update camera display in main thread"""
-        if self.camera_running:
-            self.camera_label.config(image=photo, text="")
-            self.camera_label.image = photo  # Keep a reference
+        try:
+            if (self.camera_running and 
+                hasattr(self, 'camera_label') and 
+                self.camera_label.winfo_exists()):
+                self.camera_label.config(image=photo, text="")
+                self.camera_label.image = photo  # Keep a reference
+        except tk.TclError:
+            # Widget has been destroyed, ignore
+            pass
+
+    def on_closing(self):
+        """Handle application closing properly"""
+        try:
+            # Stop camera first
+            if hasattr(self, 'camera_running'):
+                self.camera_running = False
+            
+            # Clean up camera safely
+            if hasattr(self, 'camera') and self.camera:
+                try:
+                    self.camera.release()
+                except:
+                    pass
+            
+            # Wait a moment for camera thread to finish
+            if hasattr(self, 'camera_thread') and self.camera_thread and self.camera_thread.is_alive():
+                try:
+                    self.camera_thread.join(timeout=1.0)
+                except:
+                    pass
+        except:
+            pass
+        finally:
+            # Close the application
+            try:
+                self.root.quit()
+                self.root.destroy()
+            except:
+                pass
 
     def run(self):
         """Start the application"""
-        try:
-            self.root.mainloop()
-        finally:
-            self.stop_camera()
+        self.root.mainloop()
 
 
 if __name__ == "__main__":
