@@ -5,6 +5,43 @@ All notable changes to QRiftly will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2025-09-22
+
+### 🎉 Major Release - Camera Popup & Theming
+
+### Added
+- **🎯 Popup Camera Window**: Dedicated camera scanning window with large preview area
+- **🎨 Theme Toggle**: Complete light/dark theme system with professional styling
+- **🐛 Bug Report System**: Integrated GitHub Issues reporting with pre-filled templates
+- **⚡ Auto-Stop Camera**: Camera automatically stops after successful QR code detection
+- **🎮 Enhanced UX**: Improved user interface with better visual feedback
+- **⌨️ New Shortcuts**: Ctrl+T for theme toggle, enhanced keyboard navigation
+- **📱 Responsive Design**: Better layout adaptation for different screen sizes
+
+### Improved
+- **📹 Camera Experience**: Large, dedicated camera window with real-time status
+- **🎨 Visual Design**: Professional light/dark themes with consistent styling
+- **🔄 User Workflow**: One-click scan → auto-stop → view results workflow
+- **🛠️ Accessibility**: High contrast themes and better readability
+- **📋 Menu System**: Added theme and bug report options to menus
+- **💫 Performance**: Optimized camera operations and UI responsiveness
+
+### Technical
+- **🏗️ Architecture**: Modular theme system with complete UI adaptation
+- **🎯 Camera Logic**: Improved camera handling with popup window management
+- **🔧 Error Handling**: Enhanced error handling for camera and UI operations
+- **📦 Code Quality**: Cleaner code organization and better separation of concerns
+- **🎨 Styling**: Comprehensive theming system affecting all UI components
+- **🔗 Integration**: Direct GitHub Issues integration for bug reporting
+
+### User Experience
+- **🚀 One-Click Scanning**: Camera opens → detects QR → auto-stops → shows result
+- **🎨 Personalization**: Choose between light and dark themes instantly
+- **🐛 Easy Feedback**: Simple bug reporting directly to GitHub Issues
+- **📱 Modern Interface**: Clean, professional design with intuitive controls
+- **⚡ Efficient Workflow**: Minimal clicks needed for common tasks
+- **🔄 Seamless Operation**: Smooth transitions and responsive interactions
+
 ## [1.1.2] - 2025-09-22
 
 ### Fixed

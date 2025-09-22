@@ -31,10 +31,12 @@ class QRiftlyScanner:
     
     def __init__(self):
         self.root = tk.Tk()
+        self.current_theme = "dark"  # Default theme
         self.setup_ui()
         self.camera = None
         self.camera_running = False
         self.camera_thread = None
+        self.camera_window = None
         
     def setup_ui(self):
         """Initialize the main user interface with responsive modern styling"""
@@ -233,10 +235,22 @@ class QRiftlyScanner:
                                          style='Primary.TButton')
         self.connect_wifi_btn.pack(side=tk.LEFT, padx=5)
         
+        # Theme toggle button
+        self.theme_btn = ttk.Button(buttons_frame, text="🌙 Dark Theme", 
+                                   command=self.toggle_theme, 
+                                   style='Secondary.TButton')
+        self.theme_btn.pack(side=tk.RIGHT, padx=(5, 0))
+        
+        # Report bug button
+        self.bug_btn = ttk.Button(buttons_frame, text="🐛 Report Bug", 
+                                 command=self.report_bug, 
+                                 style='Secondary.TButton')
+        self.bug_btn.pack(side=tk.RIGHT, padx=5)
+        
         self.help_btn = ttk.Button(buttons_frame, text="❓ Help", 
                                  command=self.show_help, 
                                  style='Secondary.TButton')
-        self.help_btn.pack(side=tk.RIGHT, padx=(5, 0))
+        self.help_btn.pack(side=tk.RIGHT, padx=5)
         
         self.clear_btn = ttk.Button(buttons_frame, text="🗑️ Clear", 
                                   command=self.clear_results,
@@ -245,11 +259,12 @@ class QRiftlyScanner:
         
         # Camera preview frame (hidden initially)
         self.camera_frame = ttk.LabelFrame(main_frame, text="📹 Live Camera Preview", padding="15")
-        self.camera_label = ttk.Label(self.camera_frame, 
+        self.camera_label = tk.Label(self.camera_frame, 
                                      text="📷 Camera feed will appear here\nPoint camera at QR codes for automatic detection",
                                      font=('Segoe UI', 11),
                                      foreground='#7f8c8d',
-                                     justify='center')
+                                     justify='center',
+                                     bg='#f8f9fa')
         self.camera_label.pack(pady=20)
         
         # Store last scan result for actions
@@ -297,6 +312,190 @@ class QRiftlyScanner:
 Made with ❤️ by Anubhav Mishra"""
         
         messagebox.showinfo("QRiftly Help", help_text)
+
+    def toggle_theme(self):
+        """Toggle between light and dark themes"""
+        if self.current_theme == "dark":
+            self.apply_light_theme()
+            self.current_theme = "light"
+            self.theme_btn.config(text="☀️ Light Theme")
+        else:
+            self.apply_dark_theme()
+            self.current_theme = "dark"
+            self.theme_btn.config(text="🌙 Dark Theme")
+    
+    def apply_dark_theme(self):
+        """Apply dark theme colors"""
+        # Main window
+        self.root.configure(bg='#2c3e50')
+        
+        # Update styles for dark theme
+        style = ttk.Style()
+        style.theme_use('clam')
+        
+        # Configure dark theme styles
+        style.configure('TFrame', background='#2c3e50', borderwidth=0)
+        style.configure('TLabelFrame', background='#2c3e50', foreground='#ecf0f1', 
+                       borderwidth=2, relief='groove')
+        style.configure('TLabel', background='#2c3e50', foreground='#ecf0f1')
+        
+        # Button styles for dark theme
+        style.configure('Action.TButton',
+                       background='#3498db',
+                       foreground='white',
+                       borderwidth=2,
+                       focuscolor='none',
+                       font=('Segoe UI', 10, 'bold'))
+        
+        style.map('Action.TButton',
+                 background=[('active', '#2980b9'),
+                            ('pressed', '#21618c')])
+                            
+        style.configure('Secondary.TButton',
+                       background='#34495e',
+                       foreground='white',
+                       borderwidth=1,
+                       focuscolor='none')
+        
+        style.map('Secondary.TButton',
+                 background=[('active', '#4a6278'),
+                            ('pressed', '#2c3e50')])
+        
+        # Update text widgets
+        if hasattr(self, 'results_text'):
+            self.results_text.configure(bg='#34495e', fg='#ecf0f1', 
+                                       insertbackground='#ecf0f1',
+                                       selectbackground='#3498db')
+    
+    def apply_light_theme(self):
+        """Apply light theme colors"""
+        # Main window
+        self.root.configure(bg='#f8f9fa')
+        
+        # Update styles for light theme
+        style = ttk.Style()
+        style.theme_use('clam')
+        
+        # Configure light theme styles
+        style.configure('TFrame', background='#f8f9fa', borderwidth=0)
+        style.configure('TLabelFrame', background='#f8f9fa', foreground='#2c3e50', 
+                       borderwidth=2, relief='groove')
+        style.configure('TLabel', background='#f8f9fa', foreground='#2c3e50')
+        
+        # Button styles for light theme
+        style.configure('Action.TButton',
+                       background='#007acc',
+                       foreground='white',
+                       borderwidth=2,
+                       focuscolor='none',
+                       font=('Segoe UI', 10, 'bold'))
+        
+        style.map('Action.TButton',
+                 background=[('active', '#005a9e'),
+                            ('pressed', '#004578')])
+                            
+        style.configure('Secondary.TButton',
+                       background='#e9ecef',
+                       foreground='#495057',
+                       borderwidth=1,
+                       focuscolor='none')
+        
+        style.map('Secondary.TButton',
+                 background=[('active', '#dee2e6'),
+                            ('pressed', '#ced4da')])
+        
+        # Update text widgets
+        if hasattr(self, 'results_text'):
+            self.results_text.configure(bg='white', fg='#2c3e50', 
+                                       insertbackground='#2c3e50',
+                                       selectbackground='#007acc')
+
+    def report_bug(self):
+        """Open bug report dialog"""
+        bug_window = tk.Toplevel(self.root)
+        bug_window.title("🐛 Report Bug - QRiftly")
+        bug_window.geometry("500x400")
+        bug_window.resizable(False, False)
+        bug_window.transient(self.root)
+        
+        # Center the window
+        bug_window.grab_set()
+        
+        # Configure window
+        if self.current_theme == "dark":
+            bug_window.configure(bg='#2c3e50')
+            text_bg, text_fg = '#34495e', '#ecf0f1'
+            button_bg, button_fg = '#3498db', 'white'
+        else:
+            bug_window.configure(bg='#f8f9fa')
+            text_bg, text_fg = 'white', '#2c3e50'
+            button_bg, button_fg = '#007acc', 'white'
+        
+        # Header
+        header_label = tk.Label(bug_window, text="🐛 Report a Bug", 
+                               font=('Segoe UI', 16, 'bold'),
+                               bg=bug_window['bg'], fg=text_fg)
+        header_label.pack(pady=10)
+        
+        # Instructions
+        instructions = tk.Label(bug_window, 
+                               text="Please describe the bug you encountered:",
+                               font=('Segoe UI', 10),
+                               bg=bug_window['bg'], fg=text_fg)
+        instructions.pack(pady=5)
+        
+        # Text area for bug description
+        text_frame = tk.Frame(bug_window, bg=bug_window['bg'])
+        text_frame.pack(pady=10, padx=20, fill=tk.BOTH, expand=True)
+        
+        bug_text = tk.Text(text_frame, height=10, width=50,
+                          bg=text_bg, fg=text_fg,
+                          insertbackground=text_fg,
+                          font=('Segoe UI', 10))
+        bug_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        
+        scrollbar = tk.Scrollbar(text_frame)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        bug_text.config(yscrollcommand=scrollbar.set)
+        scrollbar.config(command=bug_text.yview)
+        
+        # Placeholder text
+        placeholder = "Example:\n• Camera doesn't start\n• QR code not detected\n• App crashes when...\n\nPlease include:\n• What you were doing\n• What happened\n• What you expected to happen"
+        bug_text.insert(tk.END, placeholder)
+        bug_text.config(state=tk.NORMAL)
+        
+        # Buttons frame
+        buttons_frame = tk.Frame(bug_window, bg=bug_window['bg'])
+        buttons_frame.pack(pady=10)
+        
+        def open_github_issues():
+            """Open GitHub issues page"""
+            import webbrowser
+            bug_description = bug_text.get(1.0, tk.END).strip()
+            if bug_description and bug_description != placeholder.strip():
+                # URL encode the bug description for GitHub issue
+                import urllib.parse
+                encoded_desc = urllib.parse.quote(f"**Bug Description:**\n{bug_description}\n\n**Environment:**\n- OS: Windows\n- QRiftly Version: v1.1.2")
+                github_url = f"https://github.com/anubhav-n-mishra/Desktop-QR-Scanner/issues/new?title=Bug%20Report&body={encoded_desc}"
+            else:
+                github_url = "https://github.com/anubhav-n-mishra/Desktop-QR-Scanner/issues/new"
+            
+            webbrowser.open(github_url)
+            bug_window.destroy()
+        
+        github_btn = tk.Button(buttons_frame, text="📝 Open GitHub Issues",
+                              command=open_github_issues,
+                              bg=button_bg, fg=button_fg,
+                              font=('Segoe UI', 10, 'bold'),
+                              padx=20, pady=5)
+        github_btn.pack(side=tk.LEFT, padx=5)
+        
+        close_btn = tk.Button(buttons_frame, text="❌ Close",
+                             command=bug_window.destroy,
+                             bg='#e74c3c', fg='white',
+                             font=('Segoe UI', 10),
+                             padx=20, pady=5)
+        close_btn.pack(side=tk.LEFT, padx=5)
         
     def add_result(self, qr_data: str, source: str = ""):
         """Add a QR scan result to the results area with improved formatting"""
@@ -373,6 +572,8 @@ Made with ❤️ by Anubhav Mishra"""
         tools_menu.add_command(label="📷 Toggle Camera", command=self.toggle_camera, accelerator="Ctrl+C")
         tools_menu.add_command(label="📋 Copy All Results", command=self.copy_results, accelerator="Ctrl+A")
         tools_menu.add_separator()
+        tools_menu.add_command(label="🌙 Toggle Theme", command=self.toggle_theme, accelerator="Ctrl+T")
+        tools_menu.add_separator()
         tools_menu.add_command(label="🖥️ Create Desktop Shortcut", command=self.create_desktop_shortcut)
         tools_menu.add_command(label="📌 Pin to Taskbar", command=self.pin_to_taskbar)
         
@@ -380,6 +581,7 @@ Made with ❤️ by Anubhav Mishra"""
         help_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Help", menu=help_menu)
         help_menu.add_command(label="❓ Help & Usage", command=self.show_help, accelerator="F1")
+        help_menu.add_command(label="🐛 Report Bug", command=self.report_bug)
         help_menu.add_command(label="🌟 About QRiftly", command=self.show_about)
         
         # Bind keyboard shortcuts
@@ -388,6 +590,7 @@ Made with ❤️ by Anubhav Mishra"""
         self.root.bind('<Control-c>', lambda e: self.toggle_camera())
         self.root.bind('<Control-l>', lambda e: self.clear_results())
         self.root.bind('<Control-a>', lambda e: self.copy_results())
+        self.root.bind('<Control-t>', lambda e: self.toggle_theme())
         self.root.bind('<F1>', lambda e: self.show_help())
     
     def create_desktop_shortcut(self):
@@ -793,7 +996,7 @@ Professional QR Code Scanner
             self.start_camera()
 
     def start_camera(self):
-        """Start camera scanning"""
+        """Start camera scanning in a popup window"""
         try:
             self.update_status("Starting camera...", show_progress=True, emoji="📹")
             
@@ -805,22 +1008,110 @@ Professional QR Code Scanner
             self.camera_running = True
             self.camera_btn.config(text="🛑 Stop Camera\n📹 Live Scanning")
             
-            # Show camera frame with pack layout
-            self.camera_frame.pack(fill=tk.X, pady=(0, 15))
+            # Create camera popup window
+            self.create_camera_window()
             
             # Start camera thread
             self.camera_thread = threading.Thread(target=self.camera_loop, daemon=True)
             self.camera_thread.start()
             
-            self.update_status("Camera started - point at QR codes! 📹", emoji="✅")
+            self.update_status("Camera started - point at QR codes! 📹 (Auto-stops after scan)", emoji="✅")
             
         except Exception as e:
             self.update_status("Camera start failed ❌", emoji="😞")
             messagebox.showerror("Camera Error", f"Failed to start camera: {str(e)}")
             self.camera_running = False
 
+    def create_camera_window(self):
+        """Create a dedicated camera popup window"""
+        self.camera_window = tk.Toplevel(self.root)
+        self.camera_window.title("📹 QRiftly Live Camera Scanner")
+        self.camera_window.geometry("600x500")
+        self.camera_window.resizable(True, True)
+        
+        # Center the camera window
+        self.camera_window.transient(self.root)
+        
+        # Configure the window
+        if self.current_theme == "dark":
+            self.camera_window.configure(bg='#2c3e50')
+            header_bg, header_fg = '#34495e', 'white'
+            status_bg = '#2c3e50'
+        else:
+            self.camera_window.configure(bg='#f8f9fa')
+            header_bg, header_fg = '#e9ecef', '#2c3e50'
+            status_bg = '#f8f9fa'
+        
+        # Header frame
+        header_frame = tk.Frame(self.camera_window, bg=header_bg, height=60)
+        header_frame.pack(fill=tk.X)
+        header_frame.pack_propagate(False)
+        
+        # Title label
+        title_label = tk.Label(header_frame, 
+                              text="📹 Live QR Scanner (Auto-Stop)", 
+                              font=('Segoe UI', 16, 'bold'),
+                              fg=header_fg, bg=header_bg)
+        title_label.pack(pady=15)
+        
+        # Camera display frame
+        camera_display_frame = tk.Frame(self.camera_window, bg=self.camera_window['bg'])
+        camera_display_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
+        
+        # Camera label for video feed
+        self.camera_label = tk.Label(camera_display_frame,
+                                    text="📷 Initializing camera...\nPoint at QR codes for detection",
+                                    font=('Segoe UI', 12),
+                                    fg=header_fg, bg=header_bg,
+                                    width=50, height=20,
+                                    justify='center')
+        self.camera_label.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
+        
+        # Status frame
+        status_frame = tk.Frame(self.camera_window, bg=status_bg, height=80)
+        status_frame.pack(fill=tk.X, side=tk.BOTTOM)
+        status_frame.pack_propagate(False)
+        
+        # Camera status label
+        self.camera_status_label = tk.Label(status_frame,
+                                           text="🔍 Ready to scan - Camera will auto-stop after successful scan",
+                                           font=('Segoe UI', 11),
+                                           fg='#2ecc71', bg=status_bg)
+        self.camera_status_label.pack(pady=5)
+        
+        # Control buttons frame
+        control_frame = tk.Frame(status_frame, bg=status_bg)
+        control_frame.pack(pady=5)
+        
+        # Stop camera button
+        stop_btn = tk.Button(control_frame,
+                            text="🛑 Stop Camera",
+                            font=('Segoe UI', 10, 'bold'),
+                            bg='#e74c3c', fg='white',
+                            activebackground='#c0392b',
+                            command=self.stop_camera,
+                            padx=20, pady=5)
+        stop_btn.pack(side=tk.LEFT, padx=5)
+        
+        # Minimize button
+        minimize_btn = tk.Button(control_frame,
+                               text="📱 Minimize",
+                               font=('Segoe UI', 10),
+                               bg='#3498db', fg='white',
+                               activebackground='#2980b9',
+                               command=self.camera_window.iconify,
+                               padx=20, pady=5)
+        minimize_btn.pack(side=tk.LEFT, padx=5)
+        
+        # Handle camera window closing
+        self.camera_window.protocol("WM_DELETE_WINDOW", self.stop_camera)
+        
+        # Keep window on top initially
+        self.camera_window.lift()
+        self.camera_window.focus_force()
+
     def stop_camera(self):
-        """Stop camera scanning with proper cleanup"""
+        """Stop camera scanning and close popup window"""
         self.camera_running = False
         
         # Safely update button text if widget still exists
@@ -839,10 +1130,11 @@ Professional QR Code Scanner
                 pass
             self.camera = None
         
-        # Hide camera frame safely
+        # Close camera window if it exists
         try:
-            if hasattr(self, 'camera_frame') and self.camera_frame.winfo_exists():
-                self.camera_frame.pack_forget()
+            if hasattr(self, 'camera_window') and self.camera_window and self.camera_window.winfo_exists():
+                self.camera_window.destroy()
+                self.camera_window = None
         except tk.TclError:
             # Widget has been destroyed, ignore
             pass
@@ -890,9 +1182,23 @@ Professional QR Code Scanner
                             try:
                                 if self.camera_running and hasattr(self, 'root') and self.root.winfo_exists():
                                     self.root.after(0, self.add_result, qr_data, "📹 Live Camera")
+                                    # Update camera status
+                                    if hasattr(self, 'camera_status_label') and self.camera_window and self.camera_window.winfo_exists():
+                                        self.root.after(0, lambda: self.camera_status_label.config(text=f"✅ QR Code Detected: {qr_data[:30]}...", fg='#2ecc71'))
+                                    
+                                    # Auto-stop camera after successful scan
+                                    self.root.after(1000, self.stop_camera)  # Stop after 1 second to show success message
+                                    return  # Exit camera loop
                             except (tk.TclError, AttributeError):
                                 break
                         last_scan_time = current_time
+                    else:
+                        # Update status to show scanning
+                        try:
+                            if hasattr(self, 'camera_status_label') and self.camera_window and self.camera_window.winfo_exists():
+                                self.root.after(0, lambda: self.camera_status_label.config(text="🔍 Scanning for QR codes...", fg='#f39c12'))
+                        except (tk.TclError, AttributeError):
+                            pass
                 
                 time.sleep(0.1)  # Small delay to prevent excessive CPU usage
                 

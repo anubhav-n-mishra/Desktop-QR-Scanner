@@ -1,12 +1,12 @@
-# 🔍 QRiftly - Professional QR Code Scanner
+# 🔍 QRiftly - Professional QR Code Scanner v2.0
 
 <div align="center">
 
-![QRiftly Logo](https://img.shields.io/badge/QRiftly-Professional%20QR%20Scanner-blue?style=for-the-badge&logo=qr-code)
+![QRiftly Logo](https://img.shields.io/badge/QRiftly-Professional%20QR%20Scanner%20v2.0-blue?style=for-the-badge&logo=qr-code)
 
-**The ultimate Windows QR code scanner with WiFi auto-connect**
+**The ultimate Windows QR code scanner with popup camera, themes, and WiFi auto-connect**
 
-[![Download](https://img.shields.io/badge/Download-Latest%20Release-green?style=for-the-badge)](https://github.com/anubhav-n-mishra/Desktop-QR-Scanner/releases)
+[![Download](https://img.shields.io/badge/Download-v2.0%20Release-green?style=for-the-badge)](https://github.com/anubhav-n-mishra/Desktop-QR-Scanner/releases)
 [![Windows](https://img.shields.io/badge/Platform-Windows%207%2B-lightgrey?style=for-the-badge&logo=windows)](https://github.com/anubhav-n-mishra/Desktop-QR-Scanner)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
@@ -16,12 +16,27 @@
 
 ---
 
+## 🎉 Version 2.0 - Major Update!
+
+### 🆕 **New in v2.0**
+- **🎯 Popup Camera Window** - Dedicated camera scanning with large preview
+- **🎨 Light/Dark Themes** - Professional theming system with instant toggle
+- **🐛 Bug Report System** - Direct GitHub Issues integration for feedback
+- **⚡ Auto-Stop Camera** - Camera automatically stops after successful scan
+- **📱 Enhanced UI** - Modern, responsive design with better usability
+
 ## ✨ Features
 
 ### 🔍 **Multiple Scanning Methods**
 - 📸 **Screenshot Capture** - Scan QR codes directly from your screen
 - 📁 **File Scanning** - Load and scan image files (PNG, JPG, BMP, etc.)
-- 📷 **Live Webcam** - Real-time QR code detection with camera preview
+- 📷 **Live Camera Popup** - Dedicated camera window with auto-stop detection
+
+### 🎨 **Theming & Customization**
+- 🌙 **Dark Theme** - Modern dark interface (default)
+- ☀️ **Light Theme** - Clean, professional light interface
+- ⌨️ **Quick Toggle** - Ctrl+T to instantly switch themes
+- 🎯 **Complete Theming** - All windows and dialogs adapt to selected theme
 
 ### 📶 **Smart WiFi Integration**
 - 🔗 **One-Click WiFi Connection** - Automatically connect to WiFi networks
@@ -42,13 +57,26 @@
 
 ---
 
-## 🚀 Quick Start
+### 🎯 **Enhanced Camera Experience (v2.0)**
+- **📱 Popup Window** - Dedicated camera window with large preview area
+- **⚡ Auto-Stop** - Camera automatically stops after successful QR detection
+- **🔄 Real-time Status** - Live scanning status and detection feedback
+- **🎨 Theme Aware** - Camera window matches your selected theme
+- **🖥️ Flexible Layout** - Resizable and moveable camera window
+
+### � **User Support & Feedback**
+- **🐛 Bug Report System** - Easy bug reporting directly to GitHub Issues
+- **📝 Pre-filled Templates** - Structured bug reports with environment info
+- **🔗 Direct Integration** - One-click access to project issues page
+- **💬 Community Support** - Active development and user feedback
+
+## �🚀 Quick Start
 
 ### 📥 Download & Install
 
 #### Option 1: Download Executable (Recommended)
 1. Go to [Releases](https://github.com/anubhav-n-mishra/Desktop-QR-Scanner/releases)
-2. Download `QRiftly.exe`
+2. Download `QRiftly-v2.0.exe`
 3. Run the executable - no installation needed!
 
 #### Option 2: Run from Source
